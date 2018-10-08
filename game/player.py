@@ -55,13 +55,13 @@ class Player(SocketClient):
                 raise ValueError("Unknown event %s" % evt)
 
     def _on_lose(self, evt):
-        self._bot.on_board_result(Board.from_json(evt["board"]), -1)
+        self._bot.on_board_result(Board.deserialize(evt["board"]), -1)
 
     def _on_win(self, evt):
-        self._bot.on_board_result(Board.from_json(evt["board"]), 1)
+        self._bot.on_board_result(Board.deserialize(evt["board"]), 1)
 
     def _on_invalid_move(self, evt):
-        self._bot.on_invalid_move(Board.from_json(evt["board"]))
+        self._bot.on_invalid_move(Board.deserialize(evt["board"]))
 
     def _on_game_started(self, evt):
         self._bot.on_game_started(evt["against"])
@@ -72,7 +72,7 @@ class Player(SocketClient):
     def _on_get_move(self, evt):
         from configuration import MOVE_TIMEOUT
 
-        board = Board.from_json(evt["board"])
+        board = Board.deserialize(evt["board"])
         if configuration.PRINT_INTERMEDIATE_BOARDS:
             print(board.to_str())
 

@@ -7,20 +7,27 @@ class Board(object):
     _next_id = 1
     _L_id = RLock()
 
-    def __init__(self, size, win_length):
-        with Board._L_id:
-            self._id = Board._next_id
-            Board._next_id += 1
+    def __init__(self, size, win_length, id=None, moves=None):
+        if id is not None:
+            self._id = id
+        else:
+            with Board._L_id:
+                self._id = Board._next_id
+                Board._next_id += 1
 
         self._win_length = win_length
         self._size = size
         self._is_game_over = False
         self._is_win = False
-        self._turn_index = 0
 
         self._fields = []
+        self._moves = []
         for _ in range(size):
             self._fields.append([0] * size)
+
+        if moves:
+            for x, y in moves:
+                self.try_make_move(x, y)
 
     @property
     def size(self):
@@ -32,15 +39,15 @@ class Board(object):
 
     @property
     def turn_index(self):
-        return self._turn_index
+        return len(self._moves)
 
     @property
     def turn_color(self):
-        return (self._turn_index % 2) * 2 - 1
+        return (self.turn_index % 2) * 2 - 1
 
     @property
     def is_game_over(self):
-        return self._is_game_over or self._is_win or self._turn_index == self._size * self._size
+        return self._is_game_over or self._is_win or self.turn_index == self._size * self._size
 
     @property
     def is_win(self):
@@ -58,7 +65,7 @@ class Board(object):
 
         self._fields[x][y] = self.turn_color
         self._is_win = self.check_win(x, y)
-        self._turn_index += 1
+        self._moves.append((x, y))
 
     def make_move(self, x, y):
         try:
@@ -136,23 +143,14 @@ class Board(object):
         return result
 
     @classmethod
-    def from_json(cls, json_data):
-        board = Board(json_data["_size"], json_data["_win_length"])
-        board._id = json_data["_id"]
-        board._turn_index = json_data["_turn_index"]
-        board._is_win = json_data["_is_win"]
-        board._is_game_over = json_data["_is_game_over"]
-        board._fields = json_data["_fields"]
-
+    def deserialize(cls, json_data):
+        board = Board(json_data["_size"], json_data["_win_length"], id=json_data["_id"], moves=json_data["_moves"])
         return board
 
-    def to_json(self):
+    def serialize(self):
         return {
             "_id": self._id,
-            "_turn_index": self._turn_index,
-            "_is_win": self._is_win,
-            "_is_game_over": self._is_game_over,
-            "_fields": self._fields,
             "_size": self._size,
-            "_win_length": self._win_length
+            "_win_length": self._win_length,
+            "_moves": self._moves,
         }
