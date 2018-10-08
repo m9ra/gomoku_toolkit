@@ -1,11 +1,11 @@
+import sys
+from threading import Thread
 from time import sleep
 
+import configuration
+from configuration import BOARD_SIZE, WIN_LENGTH, MOVE_TIMEOUT
 from game.board import Board
 from game.player import Player
-
-MOVE_TIMEOUT = 5.0
-BOARD_SIZE = 15
-WIN_LENGTH = 5
 
 
 def play_local_match(bot1, bot2, game_count, print_boards=False):
@@ -24,9 +24,12 @@ def play_in_arena(bot, game_count_limit, arena, username):
     if username is None:
         raise ValueError("Username has to be specified.")
 
+    print("Interactive Arena Console. For help press 'h' followed by enter.")
     player = Player(arena, username, bot, game_count_limit)
+
+    Thread(target=_interactive_console, args=[player], daemon=True).start()
+
     while player.is_connected:
-        # todo console controlling
         sleep(1)
 
 
@@ -50,3 +53,28 @@ def play_turn(bot, board):
 
     if board.is_win:
         bot.score += 1
+
+
+def _interactive_console(player):
+    while True:
+        command = sys.stdin.readline().strip().lower()
+        print("Recognized cmd: %s" % command)
+        command = command + " "
+        c = command[0]
+        if c == "s":
+            player._game_count_limit = 0
+            print("PLAYER WILL BE STOPPED AFTER NEXT GAME")
+        elif c == "m":
+            configuration.PRINT_INTERMEDIATE_BOARDS = not configuration.PRINT_INTERMEDIATE_BOARDS
+        elif c == "n":
+            configuration.PRINT_NETWORK_COMMUNICATION = not configuration.PRINT_NETWORK_COMMUNICATION
+        elif c == "b":
+            configuration.PRINT_RESULT_BOARDS = not configuration.PRINT_RESULT_BOARDS
+
+
+        else:
+            print("Console commands (after command press enter):")
+            print("\t 's' - stops current game.")
+            print("\t 'm' - toggle move before board printing.")
+            print("\t 'b' - toggle finished board printing.")
+            print("\t 'n' - toggle network communication printing.")

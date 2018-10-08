@@ -2,6 +2,8 @@ import json
 import socket
 import traceback
 
+import configuration
+
 
 class SocketClient(object):
     def __init__(self, socket):
@@ -21,6 +23,9 @@ class SocketClient(object):
 
     def send_json(self, data):
         json_data = json.dumps(data)
+        if configuration.PRINT_NETWORK_COMMUNICATION:
+            print(f">>>{json_data}")
+
         self.send_message(json_data)
 
     def send_message(self, raw_data):
@@ -87,5 +92,8 @@ class SocketClient(object):
         json_data = self.read_next_string(timeout)
         if json_data is None or json_data == "":
             return None
+
+        if configuration.PRINT_NETWORK_COMMUNICATION:
+            print(f"<<<{json_data}")
 
         return json.loads(json_data)

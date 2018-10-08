@@ -1,3 +1,6 @@
+import configuration
+
+
 class BotBase(object):
 
     def __init__(self):
@@ -7,6 +10,9 @@ class BotBase(object):
         raise NotImplementedError("must be implemented")
 
     def on_board_result(self, board, score):
+        if configuration.PRINT_RESULT_BOARDS:
+            print(board.to_str())
+
         self._score += max(0, score)
         result_description = "won" if score > 0 else "lost"
         print(f"\t {result_description}, total score: {self._score}")

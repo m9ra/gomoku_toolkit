@@ -1,5 +1,6 @@
 from threading import Thread
 
+import configuration
 from game.board import Board
 from networking.socket_client import SocketClient
 
@@ -69,9 +70,12 @@ class Player(SocketClient):
         self._request_opponent()
 
     def _on_get_move(self, evt):
-        from game.runtime import MOVE_TIMEOUT
+        from configuration import MOVE_TIMEOUT
 
         board = Board.from_json(evt["board"])
+        if configuration.PRINT_INTERMEDIATE_BOARDS:
+            print(board.to_str())
+
         move_id = evt["id"]
         x, y = self._bot.get_move(board, MOVE_TIMEOUT)
 
