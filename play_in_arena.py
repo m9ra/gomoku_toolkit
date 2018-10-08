@@ -5,7 +5,7 @@ from bots.random_bot import RandomBot
 
 # When launched - interactive console appears (allows to stop bot peacefully - without loosing points).
 
-# NOTE: q followed by enter, or crtl-c will stop asap without loosing points.
+# NOTE: 's' followed by enter will stop asap without loosing points.
 # Killing the process forcefully will cause loosing games in progress.
 
 play_in_arena(
