@@ -27,7 +27,7 @@ def play_in_arena(bot, game_count_limit, arena, username):
     print("Interactive Arena Console. For help press 'h' followed by enter.")
     player = Player(arena, username, bot, game_count_limit)
 
-    Thread(target=_interactive_console, args=[player], daemon=True).start()
+    Thread(target=_interactive_console, args=[player], daemon=True, ).start()
 
     while player.is_connected:
         sleep(1)
@@ -49,6 +49,10 @@ def play_turn(bot, board):
         return
 
     x, y = bot.get_move(board, MOVE_TIMEOUT)
+    if x is None or y is None:
+        print("MISSING MOVE DETECTED (maybe timeout - stopping for easier debugging)")
+        sys.exit(2)
+
     board.try_make_move(x, y)
 
     if board.is_win:
@@ -56,9 +60,10 @@ def play_turn(bot, board):
 
 
 def _interactive_console(player):
-    while True:
-        command = sys.stdin.readline().strip().lower()
-        print("Recognized cmd: %s" % command)
+    for cmd in sys.stdin:
+        print("Recognized cmd: %s" % cmd)
+
+        command = cmd.strip().lower() + " "
         command = command + " "
         c = command[0]
         if c == "s":
