@@ -1,6 +1,7 @@
 import sys
 
 from bots.random_search_bot import RandomSearchBot
+from configuration import MAIN_ARENA
 from game.runtime import play_in_arena
 
 # import your bot
@@ -18,7 +19,7 @@ play_in_arena(
     game_count_limit=None,  # unlimited game count - bot will play until stopped externally
 
     # permanent game settings - change once and forget
-    arena="127.0.0.1:5226",
+    arena=MAIN_ARENA,
     username=sys.argv[1],
     # todo fill in your username (in form of myname@cz.ibm.com). Only one username per user is allowed!!
 )
