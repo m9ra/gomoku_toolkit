@@ -24,6 +24,9 @@ def play_in_arena(bot, game_count_limit, arena, username):
     if username is None:
         raise ValueError("Username has to be specified.")
 
+    if '@' not in username:
+        raise ValueError("Email as a username is expected.")
+
     print("Interactive Arena Console. For help press 'h' followed by enter.")
     player = Player(arena, username, bot, game_count_limit)
 

@@ -15,6 +15,7 @@ class Player(SocketClient):
         self._bot = bot
         self._game_count_limit = game_count_limit
 
+        username = username.split('@')[0]
         self.send_json({'username': username})
         status = self.read_next_json().get("status", None)
         if status != "ok":
