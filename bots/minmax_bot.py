@@ -43,8 +43,8 @@ class MinmaxBot(BotBase):
 
             (0, 4),
             (4, 0),
-            (1, -3, 1),
             (0, 3, 0),
+            (1, -3, 1),
             (0, 0, 3),
             (3, 0, 0),
 
@@ -167,8 +167,8 @@ class MinmaxBot(BotBase):
         candidates = set()
 
         if len(board._moves) == 0:
-            x = random.randint(0, board.size - 1)
-            y = random.randint(0, board.size - 1)
+            x = random.randint(4, board.size - 5)
+            y = random.randint(4, board.size - 5)
             return [(x, y)]
 
         for move in board._moves:
