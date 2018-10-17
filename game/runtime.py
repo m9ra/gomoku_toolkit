@@ -45,6 +45,7 @@ def play_board(bot1, bot2, print_boards):
     print(f"\t board: {board.turn_index} turns")
     if print_boards:
         print("\t " + board.to_str().replace("\n", "\n\t "))
+        print(board._moves)
 
 
 def play_turn(bot, board):

@@ -7,83 +7,58 @@ from bots.bot_base import BotBase
 from game.board import Board
 
 
-class MinmaxBot(BotBase):
+class MinmaxBot2(BotBase):
     def __init__(self):
-        super(MinmaxBot, self).__init__()
+        super(MinmaxBot2, self).__init__()
 
-        self._patterns = [
-            (9,),
-            (8,),
-            (7,),
-            (6,),
+        self._patterns = [[  # wins
             (5,),
+            (6,),
+            (7,),
+            (8,),
+            (9,),
+        ], [  # prevent instant loss
             (1, -4, 1),
             (-4, 1),
-            (1, -4),
-
-            (-2, 1, -2),
+            (-3, 1),
+            (-1, 1, -2),
             (-1, 1, -3),
-            (-3, 1, -1),
-            (-3, 1, -2),
+            (-1, 1, -4),
+            (-2, 1, -2),
             (-2, 1, -3),
+            (-2, 1, -4),
             (-3, 1, -3),
-
-            (0, 4, 0),
-
-            (0, 1, -3, 0),
-            (0, -3, 1, 0),
-
-            (1, -3, 0, 0),
-            (0, 0, -3, 1),
-
-            (-2, 1, -1, 0),
-            (0, -2, 1, -1),
-            (-1, 1, -2, 0),
-            (0, -1, 1, -2),
-
+            (-3, 1, -4),
+            (-4, 1, -4),
+        ], [
+            (0, -2, 1)
+        ], [  # create immediate threats
             (0, 4),
-            (4, 0),
-            (1, -3, 1),
             (0, 3, 0),
-            (0, 0, 3),
-            (3, 0, 0),
-
-            (0, -1, 1, -1, 0),
-            (-1, 1, -1, 0, 0),
-            (0, 1, 0, 3),
-            (1, 0, 3, 0),
-            (1, 0, 3),
-
             (2, 0, 1, 0),
             (1, 0, 2, 0),
-            (0, 2, 0, 1),
-            (0, 1, 0, 2),
-
-            (4,),
-            (0, 0, 3),
-            (3, 0, 0),
-
-            (0, -1, 1, -1, 0),
-            (0, 0, -1, 1, -1),
-            (-1, 1, -1, 0, 0,),
-
-            (1, -2),
-            (-2, 1),
-
-            (1, -3, 1),
-            (1, -2, 1),
-
-            (0, 2, 0),
-
-            (0, 1, -1, 1, 0),
-            (0, 0, 1, -1, 1),
-            (1, -1, 1, 0, 0),
-
+            (2, 0, 2),
+            (3, 0, 2),
+            (3, 0, 3),
+            (3, 0, 4),
+            (2, 0, 4),
+            (1, 0, 4),
+        ], [
+            (3,),
+        ], [
+            (2,)
+        ]
         ]
 
         self._expanded_patterns = []
-        for pattern in self._patterns:
-            self._expanded_patterns.append(self.expand(pattern))
+        group_class = len(self._patterns)
+        for pattern_group in self._patterns:
+            group_class -= 1
+            expanded_group = set()
+            for pattern in pattern_group:
+                expanded_group.add(tuple(self.expand(pattern)))
+                expanded_group.add(tuple(reversed(self.expand(pattern))))
+            self._expanded_patterns.append((group_class, list(expanded_group)))
 
     def evaluate_move(self, board, move):
         board.push_move(move)
@@ -99,12 +74,12 @@ class MinmaxBot(BotBase):
                     condensed_missing = board.condense_segment3(segment)
                     segments.append((condensed, condensed_missing))
 
-            patternClass = len(self._expanded_patterns)
-            for pattern in self._expanded_patterns:
+            for patternClass, pattern_group in self._expanded_patterns:
                 occurence_count = 0
-                for segment in segments:
-                    if self.is_pattern_present(pattern, segment):
-                        occurence_count += 1
+                for pattern in pattern_group:
+                    for segment in segments:
+                        if self.is_pattern_present(pattern, segment):
+                            occurence_count += 1
 
                 if occurence_count > 0:
                     return (patternClass, occurence_count)

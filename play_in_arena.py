@@ -1,4 +1,6 @@
 from bots.minmax_bot import MinmaxBot
+from bots.minmax_bot2 import MinmaxBot2
+from bots.minmax_bot3 import MinmaxBot3
 from bots.my_search_bot import MySearchBot
 from configuration import MAIN_ARENA
 from game.runtime import play_in_arena

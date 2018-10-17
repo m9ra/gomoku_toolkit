@@ -7,9 +7,9 @@ from bots.bot_base import BotBase
 from game.board import Board
 
 
-class MinmaxBot(BotBase):
+class MinmaxBot3(BotBase):
     def __init__(self):
-        super(MinmaxBot, self).__init__()
+        super(MinmaxBot3, self).__init__()
 
         self._patterns = [
             (9,),
@@ -28,26 +28,21 @@ class MinmaxBot(BotBase):
             (-2, 1, -3),
             (-3, 1, -3),
 
-            (0, 4, 0),
-
             (0, 1, -3, 0),
             (0, -3, 1, 0),
 
-            (1, -3, 0, 0),
-            (0, 0, -3, 1),
+            (1, -3, 0),
+            (0, -3, 1),
 
             (-2, 1, -1, 0),
             (0, -2, 1, -1),
             (-1, 1, -2, 0),
             (0, -1, 1, -2),
 
-            (0, 4),
-            (4, 0),
+            (0, 4, 0),
             (1, -3, 1),
-            (0, 3, 0),
-            (0, 0, 3),
-            (3, 0, 0),
-
+            (0, 0, 4),
+            (4, 0, 0),
             (0, -1, 1, -1, 0),
             (-1, 1, -1, 0, 0),
             (0, 1, 0, 3),
@@ -59,7 +54,9 @@ class MinmaxBot(BotBase):
             (0, 2, 0, 1),
             (0, 1, 0, 2),
 
-            (4,),
+            (0, 3, 0),
+            (0, 4),
+            (4, 0),
             (0, 0, 3),
             (3, 0, 0),
 
@@ -78,12 +75,14 @@ class MinmaxBot(BotBase):
             (0, 1, -1, 1, 0),
             (0, 0, 1, -1, 1),
             (1, -1, 1, 0, 0),
-
         ]
 
         self._expanded_patterns = []
         for pattern in self._patterns:
-            self._expanded_patterns.append(self.expand(pattern))
+            p = tuple(self.expand(pattern))
+            if p not in self._expanded_patterns:
+                self._expanded_patterns.append(p)
+                self._expanded_patterns.append(tuple(reversed(p)))
 
     def evaluate_move(self, board, move):
         board.push_move(move)
