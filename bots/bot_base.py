@@ -6,6 +6,7 @@ class BotBase(object):
     def __init__(self):
         self._score = 0
 
+
     def get_move(self, board, timeout):
         raise NotImplementedError("must be implemented")
 

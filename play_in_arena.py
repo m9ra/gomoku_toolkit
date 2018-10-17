@@ -1,3 +1,5 @@
+from bots.minmax_bot import MinmaxBot
+from bots.my_search_bot import MySearchBot
 from configuration import MAIN_ARENA
 from game.runtime import play_in_arena
 
@@ -12,10 +14,11 @@ from bots.random_bot import RandomBot
 play_in_arena(
 
     # Change your details here as you wish.
-    bot=RandomBot(),
+    bot=MinmaxBot(),
     game_count_limit=None,  # unlimited game count - bot will play until stopped externally
 
     # permanent game settings - change once and forget
     arena=MAIN_ARENA,
-    username=None,  # todo fill in your username (in form of myname@cz.ibm.com). Only one username per user is allowed!!
+    username="mvodolan@cz.ibm.com",
+    # todo fill in your username (in form of myname@cz.ibm.com). Only one username per user is allowed!!
 )

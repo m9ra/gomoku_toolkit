@@ -58,7 +58,7 @@ class Board(object):
             raise ValueError("Can't make move when game is over.")
 
         if x < 0 or y < 0 or x >= self._size or y >= self._size:
-            raise ValueError("Invalid coordinates given.")
+            raise ValueError("Invalid coordinates given. %s" % ((x, y)))
 
         if self._fields[x][y] != 0:
             raise ValueError("Can't place move over another one.")
@@ -86,6 +86,81 @@ class Board(object):
 
         return False
 
+    def condense(self, dir):
+
+        xs = 0
+        ys = 0
+        if dir[1] < 0:
+            xs = self.size - 1
+
+        if dir[0] < 0:
+            ys = self.size - 1
+
+        segments = []
+        for i in range(self.size):
+            segment = self.get_segment(xs, ys, dir, 14)
+
+            xs = xs + dir[1]
+            ys = ys + dir[0]
+
+            condensed_segment = self.condense_segment2(segment)
+
+            if len(condensed_segment) > 0 and (max(condensed_segment) > 0 or min(condensed_segment) < 0):
+                segments.append(condensed_segment)
+
+        return segments
+
+    def condense_segment(self, segment):
+        result = []
+        last_color = None
+        current_length = 0
+        for color in segment + [None]:
+            current_length += 1
+
+            if last_color is None:
+                last_color = color
+
+            if last_color != color or color == 0 or color is None:
+                if color is not None:
+                    result.append(current_length * last_color)
+                last_color = color
+                current_length = 0
+
+        return result
+
+    def condense_segment2(self, segment):
+        last_color = None
+        current_length = 0
+        lengths = []
+        for color in segment + [None]:  # [None serves as a final delimiter]
+            if color == last_color:
+                current_length += 1
+
+                if color == 0:
+                    lengths.append(0)
+                continue
+
+            if last_color:
+                lengths.append(current_length * last_color)
+
+            if color == 0:
+                lengths.append(0)
+
+            current_length = 1
+            last_color = color
+
+        return lengths
+
+    def condense_segment3(self, segment):
+        result = []
+        for s in segment:
+            if s is None:
+                continue
+
+            result.append(s)
+
+        return result
+
     def get_segment(self, x, y, direction, centered_halflength):
         curr_x = x - direction[0] * centered_halflength
         curr_y = y - direction[1] * centered_halflength
@@ -106,6 +181,30 @@ class Board(object):
             return None
 
         return self._fields[x][y]
+
+    def push_move(self, move):
+        x, y = move
+        self._fields[x][y] = self.turn_color
+        self._moves.append((x, y))
+
+    def pop_move(self):
+        self._is_win = False
+        self._is_game_over = False
+        x, y = self._moves.pop()
+        self._fields[x][y] = 0
+
+    def my_longest(self, x, y, dir, color, length):
+        segment = self.get_segment(x, y, dir, length)
+        for i in range(len(segment)):
+            if segment[i] != color and segment[i] != 0:
+                segment[i] = 0
+
+        return self.longest_component(segment)
+
+    def my_total(self, x, y, dir, color, length):
+        segment = self.get_segment(x, y, dir, length)
+
+        return len([m for m in segment if m == color])
 
     def longest_component(self, segment):
         last_color = None
