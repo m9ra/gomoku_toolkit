@@ -4,7 +4,7 @@ import configuration
 class BotBase(object):
 
     def __init__(self):
-        self._score = 0
+        self.score = 0
 
 
     def get_move(self, board, timeout):
@@ -14,9 +14,9 @@ class BotBase(object):
         if configuration.PRINT_RESULT_BOARDS:
             print(board.to_str())
 
-        self._score += max(0, score)
+        self.score += max(0, score)
         result_description = "won" if score > 0 else "lost"
-        print(f"\t {result_description}, total score: {self._score}")
+        print(f"\t {result_description}, total score: {self.score}")
 
     def on_invalid_move(self, board):
         print(f"\t INVALID MOVE / TIMEOUT DETECTED")
