@@ -105,18 +105,15 @@ class MinmaxBot(BotBase):
                     condensed_missing = board.condense_segment3(segment)
                     segments.append((condensed, condensed_missing))
 
-            patternClass = len(self._expanded_patterns)
+            evaluation = list()
             for pattern in self._expanded_patterns:
                 occurence_count = 0
                 for segment in segments:
                     if self.is_pattern_present(pattern, segment):
                         occurence_count += 1
 
-                if occurence_count > 0:
-                    return (patternClass, occurence_count)
-
-                patternClass -= 1
-            return 0, 0
+                evaluation.append(occurence_count)
+            return evaluation
 
         finally:
             board.pop_move()
@@ -158,16 +155,23 @@ class MinmaxBot(BotBase):
 
         best = None
         bestValue = 0
-        bestClass = 0
         for move in self.get_candidate_moves(board):
-            cls, value = self.evaluate_move(board, move)
+            value = self.evaluate_move(board, move)
 
-            if best is None or bestClass < cls or (bestClass == cls and bestValue < value):
-                bestClass = cls
+            if best is None or self.is_better(value, bestValue):
                 bestValue = value
                 best = move
 
         return best
+
+    def is_better(self, vals1, vals2):
+        for val1, val2 in zip(vals1, vals2):
+            if val1 > val2:
+                return True
+            if val1 < val2:
+                return False
+
+        return False
 
     def get_candidate_moves(self, board):
         candidates = set()
