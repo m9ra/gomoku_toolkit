@@ -115,11 +115,16 @@ class MinmaxBot5(BotBase):
         self.group("2a3",
                    (0, 3, 0),
                    (1, 0, 2, 0),
+                   )
+
+        self.group("2a3-2",
+                   (0, 3, 0),
                    (2, 0, 1, 0),
                    )
 
         self.compose("defense2", when=["2d3", "2d3"])
         self.compose("win2", when=["2a3", "2a3"])
+        self.compose("win2", when=["2a3-2", "2a3-2"])
 
     def group(self, name, *examples):
         if name in self._group_index:
