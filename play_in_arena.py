@@ -3,6 +3,7 @@ from bots.minmax_bot2 import MinmaxBot2
 from bots.minmax_bot3 import MinmaxBot3
 from bots.minmax_bot4 import MinmaxBot4
 from bots.minmax_bot5 import MinmaxBot5
+from bots.minmax_bot6 import MinmaxBot6
 from bots.my_search_bot import MySearchBot
 from configuration import MAIN_ARENA
 from game.runtime import play_in_arena
@@ -18,7 +19,7 @@ from bots.random_bot import RandomBot
 play_in_arena(
 
     # Change your details here as you wish.
-    bot=MinmaxBot5(),
+    bot=MinmaxBot6(),
     game_count_limit=None,  # unlimited game count - bot will play until stopped externally
 
     # permanent game settings - change once and forget
